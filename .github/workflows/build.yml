@@ -1,0 +1,30 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      
+      - uses: expo/expo-github-action@v8
+        with:
+          token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: latest
+      
+      - run: npm ci
+      
+      - name: Build APK
+        run: eas build --platform android --local --output=app.apk
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app.apk
+          path: app.apk
